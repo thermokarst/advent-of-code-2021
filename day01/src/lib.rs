@@ -1,12 +1,11 @@
-use std::fs;
-
-pub enum Part {
+#[allow(dead_code)]
+enum Part {
     One,
     Two,
 }
 
-pub fn do_it(part: Part, filename: String) -> usize {
-    let contents = fs::read_to_string(filename).unwrap();
+#[allow(dead_code)]
+fn do_it(part: Part, contents: &str) -> usize {
     let mut values: Vec<usize> = contents
         .lines()
         .map(|val| val.trim().parse().unwrap())
@@ -23,23 +22,18 @@ pub fn do_it(part: Part, filename: String) -> usize {
 mod tests {
     use super::*;
 
-    #[test]
-    fn sample_part_1() {
-        assert_eq!(do_it(Part::One, "data/sample.txt".to_string()), 7);
-    }
-
-    #[test]
-    fn sample_part_2() {
-        assert_eq!(do_it(Part::Two, "data/sample.txt".to_string()), 5);
-    }
+    const SAMPLE: &str = include_str!("data/sample.txt");
+    const INPUT: &str = include_str!("data/input.txt");
 
     #[test]
     fn part_1() {
-        assert_eq!(do_it(Part::One, "data/input.txt".to_string()), 1374);
+        assert_eq!(do_it(Part::One, SAMPLE), 7);
+        assert_eq!(do_it(Part::One, INPUT), 1374);
     }
 
     #[test]
     fn part_2() {
-        assert_eq!(do_it(Part::Two, "data/input.txt".to_string()), 1418);
+        assert_eq!(do_it(Part::Two, SAMPLE), 5);
+        assert_eq!(do_it(Part::Two, INPUT), 1418);
     }
 }
