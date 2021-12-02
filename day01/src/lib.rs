@@ -1,13 +1,18 @@
 use std::fs;
 
-pub fn do_it(part: String, filename: String) -> usize {
+pub enum Part {
+    One,
+    Two,
+}
+
+pub fn do_it(part: Part, filename: String) -> usize {
     let contents = fs::read_to_string(filename).unwrap();
     let mut values: Vec<usize> = contents
         .lines()
         .map(|val| val.trim().parse().unwrap())
         .collect();
 
-    if let "b" = part.as_str() {
+    if let Part::Two = part {
         values = values.windows(3).map(|w| w.iter().sum()).collect();
     }
 
@@ -20,21 +25,21 @@ mod tests {
 
     #[test]
     fn sample_part_1() {
-        assert_eq!(do_it("a".to_string(), "data/sample.txt".to_string()), 7);
+        assert_eq!(do_it(Part::One, "data/sample.txt".to_string()), 7);
     }
 
     #[test]
     fn sample_part_2() {
-        assert_eq!(do_it("b".to_string(), "data/sample.txt".to_string()), 5);
+        assert_eq!(do_it(Part::Two, "data/sample.txt".to_string()), 5);
     }
 
     #[test]
     fn part_1() {
-        assert_eq!(do_it("a".to_string(), "data/input.txt".to_string()), 1374);
+        assert_eq!(do_it(Part::One, "data/input.txt".to_string()), 1374);
     }
 
     #[test]
     fn part_2() {
-        assert_eq!(do_it("b".to_string(), "data/input.txt".to_string()), 1418);
+        assert_eq!(do_it(Part::Two, "data/input.txt".to_string()), 1418);
     }
 }
