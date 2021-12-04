@@ -4,32 +4,21 @@ enum Part {
     Two,
 }
 
-fn bin_vec_to_dec(vec: Vec<usize>) -> usize {
-    usize::from_str_radix(&vec.iter().map(|v| v.to_string()).collect::<String>(), 2).unwrap()
+fn bin_vec_to_dec(vec: &Vec<u32>) -> u32 {
+    u32::from_str_radix(&vec.iter().map(|v| v.to_string()).collect::<String>(), 2).unwrap()
 }
 
-#[allow(dead_code)]
-fn do_it(part: Part, content: &str) -> usize {
-    let values: Vec<Vec<_>> = content
-        .lines()
-        .map(|l| {
-            l.trim()
-                .chars()
-                .collect::<Vec<_>>()
-                .into_iter()
-                .map(|v| v.to_digit(10).unwrap())
-                .collect()
-        })
-        .collect();
-
-    let summed = values.iter().fold(vec![0; values[0].len()], |acc, line| {
+fn sum_vertically(values: &Vec<Vec<u32>>) -> Vec<u32> {
+    values.iter().fold(vec![0; values[0].len()], |acc, line| {
         acc.iter().zip(line.iter()).map(|(&a, &b)| a + b).collect()
-    });
+    })
+}
 
+fn part_one(values: &Vec<Vec<u32>>) -> u32 {
     let mut gamma = Vec::new();
     let mut epsilon = Vec::new();
 
-    for value in summed {
+    for value in sum_vertically(&values) {
         match value > (values.len() / 2).try_into().unwrap() {
             true => {
                 gamma.push(1);
@@ -42,12 +31,65 @@ fn do_it(part: Part, content: &str) -> usize {
         }
     }
 
-    let gamma = bin_vec_to_dec(gamma);
-    let epsilon = bin_vec_to_dec(epsilon);
+    let gamma = bin_vec_to_dec(&gamma);
+    let epsilon = bin_vec_to_dec(&epsilon);
+
+    gamma * epsilon
+}
+
+fn flail_around(values: &Vec<Vec<u32>>, high: u32, low: u32) -> u32 {
+    let mut candidates = values.clone();
+
+    for pos in 0..candidates[0].len() {
+        if candidates.len() == 1 {
+            break;
+        }
+
+        let summed = sum_vertically(&candidates);
+        let mid = (candidates.len() as f32 / 2.0).try_into().unwrap();
+        let target = summed[pos] as f32;
+
+        let matcher: u32;
+
+        if target >= mid {
+            matcher = high;
+        } else {
+            matcher = low;
+        }
+
+        candidates = candidates
+            .into_iter()
+            .filter(|v| v[pos] == matcher)
+            .collect();
+    }
+
+    bin_vec_to_dec(&candidates[0])
+}
+
+fn part_two(values: &Vec<Vec<u32>>) -> u32 {
+    let oxy = flail_around(&values, 1, 0);
+    let co2 = flail_around(&values, 0, 1);
+
+    oxy * co2
+}
+
+#[allow(dead_code)]
+fn do_it(part: Part, content: &str) -> u32 {
+    let values: Vec<Vec<_>> = content
+        .lines()
+        .map(|l| {
+            l.trim()
+                .chars()
+                .collect::<Vec<_>>()
+                .into_iter()
+                .map(|v| v.to_digit(10).unwrap())
+                .collect()
+        })
+        .collect();
 
     match part {
-        Part::One => gamma * epsilon,
-        Part::Two => 2,
+        Part::One => part_one(&values),
+        Part::Two => part_two(&values),
     }
 }
 
@@ -66,7 +108,7 @@ mod tests {
 
     #[test]
     fn part_2() {
-        assert_eq!(do_it(Part::Two, SAMPLE), 2);
-        assert_eq!(do_it(Part::Two, INPUT), 2);
+        assert_eq!(do_it(Part::Two, SAMPLE), 230);
+        assert_eq!(do_it(Part::Two, INPUT), 4481199);
     }
 }
