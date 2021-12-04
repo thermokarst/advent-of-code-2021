@@ -49,13 +49,10 @@ fn flail_around(values: &Vec<Vec<u32>>, high: u32, low: u32) -> u32 {
         let mid = (candidates.len() as f32 / 2.0).try_into().unwrap();
         let target = summed[pos] as f32;
 
-        let matcher: u32;
-
-        if target >= mid {
-            matcher = high;
-        } else {
-            matcher = low;
-        }
+        let matcher = match target >= mid {
+            true => high,
+            false => low,
+        };
 
         candidates = candidates
             .into_iter()
