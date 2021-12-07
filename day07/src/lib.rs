@@ -21,12 +21,12 @@ fn do_it(part: Part, content: &str) -> usize {
     for i in 0..crabs.len() {
         let mut score = 0;
         for j in 0..crabs.len() {
+            let diff = (crabs[i] - crabs[j]).abs() as usize;
             match part {
                 Part::One => {
-                    score = score + (crabs[i] - crabs[j]).abs() as usize;
+                    score = score + diff;
                 }
                 Part::Two => {
-                    let diff = (crabs[i] - crabs[j]).abs() as usize;
                     score = score + (((diff * diff) + diff) / 2);
                 }
             }
