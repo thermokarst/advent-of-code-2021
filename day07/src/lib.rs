@@ -5,7 +5,6 @@ enum Part {
 }
 
 type Crabs = Vec<isize>;
-type Scores = Vec<usize>;
 
 #[allow(dead_code)]
 fn do_it(part: Part, content: &str) -> usize {
@@ -17,23 +16,24 @@ fn do_it(part: Part, content: &str) -> usize {
         .map(|v| v.parse().unwrap())
         .collect();
 
-    let mut fuel_scores: Scores = Vec::new();
-    for i in 0..crabs.len() {
+    let mut min_score = usize::MAX;
+    'outer: for to_crab in &crabs {
         let mut score = 0;
-        for j in 0..crabs.len() {
-            let diff = (crabs[i] - crabs[j]).abs() as usize;
-            match part {
-                Part::One => {
-                    score = score + diff;
-                }
-                Part::Two => {
-                    score = score + (((diff * diff) + diff) / 2);
-                }
+        for from_crab in &crabs {
+            let diff = (to_crab - from_crab).abs() as usize;
+            score += match part {
+                Part::One => diff,
+                Part::Two => ((diff * diff) + diff) / 2,
+            };
+            if score > min_score {
+                continue 'outer;
             }
         }
-        fuel_scores.push(score);
+        if score < min_score {
+            min_score = score;
+        }
     }
-    *fuel_scores.iter().min().unwrap()
+    min_score
 }
 
 #[cfg(test)] // cargo test -- --show-output [TEST_NAME]
