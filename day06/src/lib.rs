@@ -18,7 +18,11 @@ fn do_it(part: Part, content: &str) -> usize {
         .map(|v| v.parse().unwrap())
         .collect();
 
-    let mut counter: Counter = school_to_counter(&school);
+    let mut counter = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    for fish in school {
+        counter[fish] += 1;
+    }
 
     match part {
         Part::One => {
@@ -32,21 +36,11 @@ fn do_it(part: Part, content: &str) -> usize {
     }
 }
 
-fn school_to_counter(school: &School) -> Counter {
-    let mut counter = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-    for fish in school {
-        counter[*fish] = counter[*fish] + 1;
-    }
-
-    counter
-}
-
 fn exist(days: usize, mut counter: Counter) -> Counter {
     for _day in 0..days {
         let born = counter[0];
         counter.rotate_left(1); // age every group by one day
-        counter[6] = counter[6] + born; // reset age of the new parent group
+        counter[6] += born; // reset age of the new parent group
     }
 
     counter

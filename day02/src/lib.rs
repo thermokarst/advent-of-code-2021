@@ -21,9 +21,9 @@ fn do_it(part: Part, content: &str) -> usize {
         Part::One => {
             for (inst, val) in values {
                 match inst {
-                    "forward" => horiz = horiz + val,
-                    "down" => depth = depth + val,
-                    "up" => depth = depth - val,
+                    "forward" => horiz += val,
+                    "down" => depth += val,
+                    "up" => depth -= val,
                     _ => panic!("oops"),
                 }
             }
@@ -33,11 +33,11 @@ fn do_it(part: Part, content: &str) -> usize {
             for (inst, val) in values {
                 match inst {
                     "forward" => {
-                        horiz = horiz + val;
-                        depth = depth + (aim * val);
+                        horiz += val;
+                        depth += aim * val;
                     }
-                    "down" => aim = aim + val,
-                    "up" => aim = aim - val,
+                    "down" => aim += val,
+                    "up" => aim -= val,
                     _ => panic!("oops"),
                 }
             }

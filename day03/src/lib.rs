@@ -4,21 +4,21 @@ enum Part {
     Two,
 }
 
-fn bin_vec_to_dec(vec: &Vec<u32>) -> u32 {
+fn bin_vec_to_dec(vec: &[u32]) -> u32 {
     u32::from_str_radix(&vec.iter().map(|v| v.to_string()).collect::<String>(), 2).unwrap()
 }
 
-fn sum_vertically(values: &Vec<Vec<u32>>) -> Vec<u32> {
+fn sum_vertically(values: &[Vec<u32>]) -> Vec<u32> {
     values.iter().fold(vec![0; values[0].len()], |acc, line| {
         acc.iter().zip(line.iter()).map(|(&a, &b)| a + b).collect()
     })
 }
 
-fn part_one(values: &Vec<Vec<u32>>) -> u32 {
+fn part_one(values: &[Vec<u32>]) -> u32 {
     let mut gamma = Vec::new();
     let mut epsilon = Vec::new();
 
-    for value in sum_vertically(&values) {
+    for value in sum_vertically(values) {
         match value > (values.len() / 2).try_into().unwrap() {
             true => {
                 gamma.push(1);
@@ -37,8 +37,8 @@ fn part_one(values: &Vec<Vec<u32>>) -> u32 {
     gamma * epsilon
 }
 
-fn flail_around(values: &Vec<Vec<u32>>, high: u32, low: u32) -> u32 {
-    let mut candidates = values.clone();
+fn flail_around(values: &[Vec<u32>], high: u32, low: u32) -> u32 {
+    let mut candidates = values.to_owned();
 
     for pos in 0..candidates[0].len() {
         if candidates.len() == 1 {
@@ -46,7 +46,7 @@ fn flail_around(values: &Vec<Vec<u32>>, high: u32, low: u32) -> u32 {
         }
 
         let summed = sum_vertically(&candidates);
-        let mid = (candidates.len() as f32 / 2.0).try_into().unwrap();
+        let mid = candidates.len() as f32 / 2.0;
         let target = summed[pos] as f32;
 
         let matcher = match target >= mid {
@@ -63,9 +63,9 @@ fn flail_around(values: &Vec<Vec<u32>>, high: u32, low: u32) -> u32 {
     bin_vec_to_dec(&candidates[0])
 }
 
-fn part_two(values: &Vec<Vec<u32>>) -> u32 {
-    let oxy = flail_around(&values, 1, 0);
-    let co2 = flail_around(&values, 0, 1);
+fn part_two(values: &[Vec<u32>]) -> u32 {
+    let oxy = flail_around(values, 1, 0);
+    let co2 = flail_around(values, 0, 1);
 
     oxy * co2
 }

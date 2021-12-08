@@ -60,7 +60,7 @@ impl Board {
         for i in 0..self.values.len() {
             for j in 0..self.values[i].len() {
                 if self.values[i][j] != marker {
-                    sum = sum + self.values[i][j];
+                    sum += self.values[i][j];
                 }
             }
         }
@@ -97,10 +97,10 @@ fn do_it(part: Part, content: &str) -> usize {
     let mut finished_board_scores: Vec<usize> = Vec::new();
 
     for call in queue {
-        for i in 0..boards.len() {
-            let bingo = boards[i].check(call, marker);
+        for board in &mut boards {
+            let bingo = board.check(call, marker);
             if bingo {
-                finished_board_scores.push(boards[i].score(call, marker));
+                finished_board_scores.push(board.score(call, marker));
             }
         }
     }

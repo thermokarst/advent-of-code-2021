@@ -27,8 +27,7 @@ fn do_it(part: Part, content: &str) -> usize {
             let mut tally = 0;
             for output in outputs {
                 for digit in output {
-                    tally = tally
-                        + match digit.len() {
+                    tally += match digit.len() {
                             2 => 1,
                             3 => 1,
                             4 => 1,
@@ -131,7 +130,7 @@ fn do_it(part: Part, content: &str) -> usize {
                 );
 
                 let parsed: usize = output.parse().unwrap();
-                sum = sum + parsed;
+                sum += parsed;
             }
 
             sum

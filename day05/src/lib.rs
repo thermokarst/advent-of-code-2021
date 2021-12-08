@@ -41,19 +41,19 @@ fn do_it(part: Part, content: &str) -> usize {
         Part::One => {
             let (width, height) = board_size(&ortho_lines);
             let ortho_board: Board = vec![vec![0; width + 1]; height + 1];
-            let ortho_board = tally(ortho_board, &ortho_lines, true);
+            let ortho_board = tally(ortho_board, ortho_lines, true);
             count(ortho_board)
         }
         Part::Two => {
             let (width, height) = board_size(&all_lines);
             let full_board: Board = vec![vec![0; width + 1]; height + 1];
-            let full_board = tally(full_board, &all_lines, false);
+            let full_board = tally(full_board, all_lines, false);
             count(full_board)
         }
     }
 }
 
-fn board_size(lines: &Instructions) -> (usize, usize) {
+fn board_size(lines: &[Line]) -> (usize, usize) {
     let mut width = 0;
     let mut height = 0;
 
@@ -75,7 +75,7 @@ fn board_size(lines: &Instructions) -> (usize, usize) {
     (width, height)
 }
 
-fn tally(mut board: Board, lines: &Instructions, only_ortho: bool) -> Board {
+fn tally(mut board: Board, lines: Instructions, only_ortho: bool) -> Board {
     for ((x1, y1), (x2, y2)) in lines.iter() {
         let min_x = std::cmp::min(x1, x2);
         let max_x = std::cmp::max(x1, x2) + 1;
@@ -84,13 +84,13 @@ fn tally(mut board: Board, lines: &Instructions, only_ortho: bool) -> Board {
 
         if x1 == x2 {
             // vertical line
-            for i in *min_y..max_y {
-                board[i][*x1] = board[i][*x1] + 1;
+            for i in board.iter_mut().take(max_y).skip(*min_y) {
+                i[*x1] += 1;
             }
         } else if y1 == y2 {
             // horizontal line
             for i in *min_x..max_x {
-                board[*y1][i] = board[*y1][i] + 1;
+                board[*y1][i] += 1;
             }
         } else if !only_ortho {
             // diagonal line
@@ -103,7 +103,7 @@ fn tally(mut board: Board, lines: &Instructions, only_ortho: bool) -> Board {
                 for (ii, i) in (*min_x..max_x).enumerate() {
                     for (jj, j) in (*min_y..max_y).enumerate() {
                         if ii == jj {
-                            board[j][i] = board[j][i] + 1;
+                            board[j][i] += 1;
                         }
                     }
                 }
@@ -111,7 +111,7 @@ fn tally(mut board: Board, lines: &Instructions, only_ortho: bool) -> Board {
                 for (ii, i) in (*min_x..max_x).enumerate() {
                     for (jj, j) in (*min_y..max_y).rev().enumerate() {
                         if ii == jj {
-                            board[j][i] = board[j][i] + 1;
+                            board[j][i] += 1;
                         }
                     }
                 }
@@ -124,10 +124,10 @@ fn tally(mut board: Board, lines: &Instructions, only_ortho: bool) -> Board {
 
 fn count(board: Board) -> usize {
     let mut count = 0;
-    for i in 0..board.len() {
-        for j in 0..board[i].len() {
-            if board[i][j] > 1 {
-                count = count + 1;
+    for i in &board {
+        for j in i {
+            if j > &1 {
+                count += 1;
             }
         }
     }
