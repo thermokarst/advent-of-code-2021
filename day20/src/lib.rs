@@ -1,4 +1,4 @@
-const PAD: usize = 10;
+const PAD: usize = 4;
 
 #[allow(dead_code)]
 enum Part {
@@ -36,6 +36,19 @@ fn depad(input: Vec<Vec<usize>>) -> Vec<Vec<usize>> {
         }
     }
     depadded
+}
+
+fn print(input: &[Vec<usize>]) {
+    for row in input {
+        for c in row {
+            match c {
+                0 => print!("."),
+                1 => print!("#"),
+                _ => unreachable!(),
+            }
+        }
+        println!();
+    }
 }
 
 #[allow(dead_code)]
@@ -77,6 +90,8 @@ fn do_it(part: Part, content: &str) -> usize {
         }
         padded = depad(padded);
     }
+
+    print(&padded);
 
     padded.iter().map(|row| row.iter().sum::<usize>()).sum()
 }
